@@ -1,0 +1,6 @@
+RestApis: 
+- Name: corona
+  Url: "http://apis.data.go.kr/1790387/covid19CurrentStatusKorea/covid19CurrentStatusKoreaJason"
+  Query: 
+  - Key: "serviceKey"
+    Value: abcd

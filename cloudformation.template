@@ -1,0 +1,60 @@
+{
+	"AWSTemplateFormatVersion": "2010-09-09",
+	"Resources": {
+		"IqxInstanceScanRole": {
+			"Type": "AWS::IAM::Role",
+			"Properties": {
+				"AssumeRolePolicyDocument": {
+					"Statement": [
+						{
+							"Effect": "Allow",
+							"Action": "sts:AssumeRole",
+							"Condition": {
+								"IpAddress": {
+									"aws:SourceIp": "1.1.1.1/32"
+								}
+							}
+						}
+					]
+				},
+				"policies": [
+					{
+						"PolicyName": "Application-policy",
+						"PolicyDocument": {
+							"Version": "2012-10-17",
+							"Statement": [
+								{
+									"Sid": "Inspect",
+									"Effect": "Allow",
+									"Action": [
+										"ec2:DescribeInstances",
+										"ec2:RunInstances",
+										"ec2:CreateSnapshots",
+										"ec2:CreateSnapshot",
+										"ec2:RequestSpotInstances",
+										"ec2:CancelSpotInstanceRequests",
+										"ec2:CreateTags"
+									],
+									"Resource": "*"
+								},
+								{
+									"Sid": "Delete",
+									"Effect": "Allow",
+									"Action": [
+										"ec2:DeleteSnapshot"
+									],
+									"Resource": "*",
+									"Condition": {
+										"StringLike": {
+											"ec2:ResourceTag/Iqx": "*"
+										}
+									}
+								}
+							]
+						}
+					}
+				]
+			}
+		}
+	}
+}
