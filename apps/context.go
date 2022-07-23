@@ -57,12 +57,13 @@ func initContext() (context.Context, context.CancelFunc) {
 
 	// pvRestApis := viper.GetStringMap("RestApis")
 	// Logs.Debug("%+v", pvRestApis)
+
 	data := &AppData{
 		Name:          applicationName,
 		Port:          port,
 		MaxStartRetry: retry,
 	}
-
 	ctx = context.WithValue(ctx, ctxKeyAppData, data)
+
 	return context.WithCancel(ctx)
 }
