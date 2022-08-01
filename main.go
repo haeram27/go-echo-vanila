@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"strconv"
+	"syscall"
 	"time"
 )
 
@@ -29,7 +30,7 @@ func main() {
 	apps.Logs.Info(apps.ApplicationData().Name + " started")
 
 	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, os.Interrupt)
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 
 	<-quit
 	apps.Logs.Info("to confirm shutdown, please send interrupt again")
