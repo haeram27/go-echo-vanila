@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"echoinit/apps"
 	"echoinit/routers"
 	"net/http"
@@ -30,12 +31,15 @@ func main() {
 	apps.Logs.Info(apps.ApplicationData().Name + " started")
 
 	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
-
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	apps.Logs.Info("to confirm shutdown, please send interrupt again")
-	<-quit
-	apps.Logs.Info("terminating application")
-	apps.Close()
+	apps.Logs.Info(" [*] application is terminating... ")
+	shutdownCtx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	/*
+		for the graceful shutdown.
+		please retireve any required resources under here and above apps.Close().
+		if needed timeout for shutdown procedure, please use shutdownCtx.
+	*/
+	apps.Close(shutdownCtx)
 	apps.Logs.Info("Bye")
 }

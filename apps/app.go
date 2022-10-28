@@ -11,11 +11,11 @@ import (
 )
 
 var (
-	appctx    context.Context
-	appCancel context.CancelFunc
-	flogger   *lumberjack.Logger
-	handler   *echo.Echo
-	Logs      echo.Logger
+	appctx   context.Context
+	shutdown context.CancelFunc
+	flogger  *lumberjack.Logger
+	handler  *echo.Echo
+	Logs     echo.Logger
 )
 
 func ApplicationContext() context.Context {
@@ -30,15 +30,11 @@ func Echo() *echo.Echo {
 	return handler
 }
 
-func Close() {
-	appCancel()
+func Close(timeoutCtx context.Context) {
+	shutdown()
 
 	if handler != nil {
-		if e := handler.Shutdown(context.Background()); e != nil {
-			Logs.Fatal(e)
-		}
-
-		if e := handler.Close(); e != nil {
+		if e := handler.Shutdown(timeoutCtx); e != nil {
 			Logs.Fatal(e)
 		}
 	}
@@ -64,5 +60,5 @@ func init() {
 	Logs.SetLevel(log.DEBUG)
 
 	// setup application context
-	appctx, appCancel = initContext()
+	appctx, shutdown = initContext()
 }
